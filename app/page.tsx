@@ -175,6 +175,13 @@ export default function HomePage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    const isWechat = /MicroMessenger/i.test(window.navigator.userAgent);
+    document.documentElement.setAttribute("data-webview", isWechat ? "wechat" : "non-wechat");
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     const nextCount = nextParticipantCount(window.localStorage.getItem(PARTICIPANT_STORAGE_KEY));
     window.localStorage.setItem(PARTICIPANT_STORAGE_KEY, String(nextCount));
 

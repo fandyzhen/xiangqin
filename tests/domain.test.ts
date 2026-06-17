@@ -567,6 +567,18 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(mobileBlock).toContain("margin-inline: auto;");
   });
 
+  it("移动端降低超粗字重，避免飞书里字体显得发胀", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+    const mobileHeavyBlock = css.match(/html\[data-webview="non-wechat"\] \.phone :is\(strong, button, \.topbar, \.question-kind, \.analysis-kicker, \.lead-trust-row span, \.lead-steps li, \.answer-button strong, \.choice-copy strong\)\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const mobileTitleBlock = css.match(/html\[data-webview="non-wechat"\] \.phone :is\(\.lead-card h2, \.analysis-card h2, \.ideal-head h2, \.match-archive-title\)\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+
+    expect(pageSource).toContain("MicroMessenger");
+    expect(pageSource).toContain("data-webview");
+    expect(mobileHeavyBlock).toContain("font-weight: 800;");
+    expect(mobileTitleBlock).toContain("font-weight: 700;");
+  });
+
   it("二维码和复制链接优先使用正式绑定域名", () => {
     const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
@@ -594,13 +606,22 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const trustBlock = css.match(/\.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const badgeBlock = css.match(/\.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const nonWechatTrustBlock = css.match(/html\[data-webview="non-wechat"\] \.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const nonWechatBadgeBlock = css.match(/html\[data-webview="non-wechat"\] \.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const thirdBadgeBlock = css.match(/\.lead-trust-row span:nth-child\(3\)\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
 
     expect(trustBlock).toContain("display: grid;");
     expect(trustBlock).toContain("grid-template-columns: max-content max-content;");
     expect(trustBlock).toContain("justify-content: start;");
-    expect(trustBlock).toContain("max-width:");
     expect(badgeBlock).toContain("white-space: nowrap;");
+    expect(nonWechatTrustBlock).toContain("grid-template-columns: 120px 112px;");
+    expect(nonWechatTrustBlock).toContain("width: 239px;");
+    expect(nonWechatTrustBlock).not.toContain("max-content");
+    expect(nonWechatBadgeBlock).toContain("display: inline-flex;");
+    expect(nonWechatBadgeBlock).toContain("justify-content: center;");
+    expect(nonWechatBadgeBlock).toContain("white-space: nowrap;");
+    expect(nonWechatBadgeBlock).toContain("word-break: keep-all;");
+    expect(nonWechatBadgeBlock).toContain("overflow-wrap: normal;");
     expect(thirdBadgeBlock).toContain("grid-column: 1 / -1;");
     expect(thirdBadgeBlock).toContain("justify-self: start;");
   });

@@ -1758,6 +1758,23 @@ p {
   justify-self: start;
 }
 
+html[data-webview="non-wechat"] .lead-trust-row {
+  grid-template-columns: 120px 112px;
+  width: 239px;
+  max-width: 100%;
+}
+
+html[data-webview="non-wechat"] .lead-trust-row span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
 .lead-steps {
   display: grid;
   gap: 8px;
@@ -2356,6 +2373,14 @@ p {
 
   .cover-screen {
     min-height: 100dvh;
+  }
+
+  html[data-webview="non-wechat"] .phone :is(strong, button, .topbar, .question-kind, .analysis-kicker, .lead-trust-row span, .lead-steps li, .answer-button strong, .choice-copy strong) {
+    font-weight: 800;
+  }
+
+  html[data-webview="non-wechat"] .phone :is(.lead-card h2, .analysis-card h2, .ideal-head h2, .match-archive-title) {
+    font-weight: 700;
   }
 }
 
