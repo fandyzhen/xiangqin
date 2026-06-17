@@ -542,6 +542,14 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(guideBlock).toContain("z-index: 80;");
   });
 
+  it("飞书窄视口下首页数据区和理想型选项保持双列", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const compactBlock = css.match(/@media \(max-width: 380px\)\s*\{(?<rules>[\s\S]+?)\n\}/)?.groups?.rules ?? "";
+
+    expect(compactBlock).not.toMatch(/\.game-console\s*\{[^}]*grid-template-columns:\s*1fr;/);
+    expect(compactBlock).not.toMatch(/\.layout-grid,\s*\.layout-segment\s*\{[^}]*grid-template-columns:\s*1fr;/);
+  });
+
   it("二维码和复制链接优先使用正式绑定域名", () => {
     const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
@@ -655,13 +663,17 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(fallbackPaths.dataDir).toBe("/app/data");
   });
 
-  it("档案库发现人数里的数字需要独立放大高亮", () => {
+  it("档案库发现人数里的数字需要独立高亮且窄屏不拆行", () => {
     const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const textBlock = css.match(/\.match-found-text\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const numberBlock = css.match(/\.match-count-number\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
 
     expect(pageSource).toContain('className="match-count-number"');
-    expect(numberBlock).toContain("font-size: 42px;");
+    expect(textBlock).toContain("flex-wrap: nowrap;");
+    expect(textBlock).toContain("white-space: nowrap;");
+    expect(textBlock).toContain("font-size: clamp(");
+    expect(numberBlock).toContain("font-size: clamp(");
     expect(numberBlock).toContain("color: var(--coral-2);");
   });
 
