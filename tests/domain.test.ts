@@ -550,13 +550,17 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(compactBlock).not.toMatch(/\.layout-grid,\s*\.layout-segment\s*\{[^}]*grid-template-columns:\s*1fr;/);
   });
 
-  it("移动端内置浏览器使用统一内容宽度和字体缩放", () => {
+  it("移动端内置浏览器使用统一内容宽度和本地字体栈", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const rootBlock = css.match(/:root\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const htmlBlock = css.match(/html,\s*body\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const mobileBlock = css.match(/@media \(max-width: 480px\)\s*\{(?<rules>[\s\S]+?)\n\}/)?.groups?.rules ?? "";
 
-    expect(rootBlock).toContain("--mobile-app-width: 390px;");
+    expect(css).not.toContain("@import url(\"https://fonts");
+    expect(rootBlock).toContain("--system-font:");
+    expect(rootBlock).toContain("--display: var(--system-font);");
+    expect(rootBlock).toContain("--body: var(--system-font);");
+    expect(rootBlock).toContain("--mobile-app-width: 375px;");
     expect(htmlBlock).toContain("-webkit-text-size-adjust: 100%;");
     expect(htmlBlock).toContain("text-size-adjust: 100%;");
     expect(mobileBlock).toContain("width: min(100%, var(--mobile-app-width));");
@@ -590,11 +594,15 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const trustBlock = css.match(/\.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const badgeBlock = css.match(/\.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const thirdBadgeBlock = css.match(/\.lead-trust-row span:nth-child\(3\)\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
 
     expect(trustBlock).toContain("display: grid;");
-    expect(trustBlock).toContain("grid-template-columns: repeat(2, max-content);");
+    expect(trustBlock).toContain("grid-template-columns: max-content max-content;");
     expect(trustBlock).toContain("justify-content: start;");
+    expect(trustBlock).toContain("max-width:");
     expect(badgeBlock).toContain("white-space: nowrap;");
+    expect(thirdBadgeBlock).toContain("grid-column: 1 / -1;");
+    expect(thirdBadgeBlock).toContain("justify-self: start;");
   });
 
   it("留资页使用真人微笑红娘头像而不是文字占位", () => {
@@ -708,7 +716,8 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
 
     expect(pageSource).toContain('className="match-archive-title"');
     expect(pageSource).not.toContain("<span>{MATCHING_ARCHIVE_TITLE}</span>");
-    expect(titleBlock).toContain("font-size: 34px;");
+    expect(titleBlock).toContain("font-size: clamp(");
+    expect(titleBlock).toContain("white-space: nowrap;");
     expect(titleBlock).toContain("color: #d8b4fe;");
   });
 

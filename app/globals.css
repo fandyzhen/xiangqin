@@ -1,5 +1,3 @@
-@import url("https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap");
-
 :root {
   --bg: #10061d;
   --bg-2: #1c0d32;
@@ -17,10 +15,11 @@
   --ink: #160a27;
   --white: #fbf7ff;
   --radius: 8px;
-  --display: "ZCOOL QingKe HuangYou", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --system-font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+  --display: var(--system-font);
+  --body: var(--system-font);
   --shadow: 0 28px 76px rgba(0, 0, 0, 0.34);
-  --mobile-app-width: 390px;
+  --mobile-app-width: 375px;
 }
 
 * {
@@ -42,6 +41,9 @@ body {
     var(--bg);
   color: var(--cream);
   font-family: var(--body);
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -1043,12 +1045,13 @@ p {
 }
 
 .match-archive-title {
-  max-width: 340px;
+  max-width: 100%;
   color: #d8b4fe;
   font-family: var(--display);
-  font-size: 34px;
+  font-size: clamp(29px, 8vw, 32px);
   font-weight: 400;
   line-height: 1.08;
+  white-space: nowrap;
   text-shadow: 0 0 22px rgba(216, 180, 254, 0.32), 0 7px 0 rgba(0, 0, 0, 0.16);
 }
 
@@ -1733,9 +1736,10 @@ p {
 
 .lead-trust-row {
   display: grid;
-  grid-template-columns: repeat(2, max-content);
+  grid-template-columns: max-content max-content;
   justify-content: start;
   gap: 7px;
+  max-width: 246px;
 }
 
 .lead-trust-row span {
@@ -1747,6 +1751,11 @@ p {
   font-size: 11px;
   font-weight: 900;
   white-space: nowrap;
+}
+
+.lead-trust-row span:nth-child(3) {
+  grid-column: 1 / -1;
+  justify-self: start;
 }
 
 .lead-steps {
