@@ -602,28 +602,28 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(moreLead.ctaLabel).toBe("让红娘继续帮我找");
   });
 
-  it("留资页信任标签在飞书和微信里保持两列节奏", () => {
+  it("留资页信任标签在微信和飞书里都保持单行三列", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const trustBlock = css.match(/\.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const badgeBlock = css.match(/\.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const nonWechatTrustBlock = css.match(/html\[data-webview="non-wechat"\] \.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
     const nonWechatBadgeBlock = css.match(/html\[data-webview="non-wechat"\] \.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
-    const thirdBadgeBlock = css.match(/\.lead-trust-row span:nth-child\(3\)\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
 
     expect(trustBlock).toContain("display: grid;");
-    expect(trustBlock).toContain("grid-template-columns: max-content max-content;");
+    expect(trustBlock).toContain("grid-template-columns: repeat(3, max-content);");
     expect(trustBlock).toContain("justify-content: start;");
+    expect(trustBlock).toContain("align-items: center;");
+    expect(css).not.toContain(".lead-trust-row span:nth-child(3)");
     expect(badgeBlock).toContain("white-space: nowrap;");
-    expect(nonWechatTrustBlock).toContain("grid-template-columns: 120px 112px;");
-    expect(nonWechatTrustBlock).toContain("width: 239px;");
+    expect(nonWechatTrustBlock).toContain("grid-template-columns: 100px 90px 90px;");
+    expect(nonWechatTrustBlock).toContain("width: 292px;");
     expect(nonWechatTrustBlock).not.toContain("max-content");
     expect(nonWechatBadgeBlock).toContain("display: inline-flex;");
     expect(nonWechatBadgeBlock).toContain("justify-content: center;");
+    expect(nonWechatBadgeBlock).toContain("font-size: 10px;");
     expect(nonWechatBadgeBlock).toContain("white-space: nowrap;");
     expect(nonWechatBadgeBlock).toContain("word-break: keep-all;");
     expect(nonWechatBadgeBlock).toContain("overflow-wrap: normal;");
-    expect(thirdBadgeBlock).toContain("grid-column: 1 / -1;");
-    expect(thirdBadgeBlock).toContain("justify-self: start;");
   });
 
   it("留资页使用真人微笑红娘头像而不是文字占位", () => {

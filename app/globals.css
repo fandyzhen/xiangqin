@@ -1736,10 +1736,11 @@ p {
 
 .lead-trust-row {
   display: grid;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: repeat(3, max-content);
   justify-content: start;
+  align-items: center;
   gap: 7px;
-  max-width: 246px;
+  max-width: 100%;
 }
 
 .lead-trust-row span {
@@ -1753,15 +1754,11 @@ p {
   white-space: nowrap;
 }
 
-.lead-trust-row span:nth-child(3) {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-
 html[data-webview="non-wechat"] .lead-trust-row {
-  grid-template-columns: 120px 112px;
-  width: 239px;
+  grid-template-columns: 100px 90px 90px;
+  width: 292px;
   max-width: 100%;
+  gap: 6px;
 }
 
 html[data-webview="non-wechat"] .lead-trust-row span {
@@ -1769,6 +1766,8 @@ html[data-webview="non-wechat"] .lead-trust-row span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 5px 6px;
+  font-size: 10px;
   line-height: 1;
   white-space: nowrap;
   word-break: keep-all;
