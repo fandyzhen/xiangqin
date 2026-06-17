@@ -564,6 +564,17 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(mobileBlock).toContain("white-space: nowrap;");
   });
 
+  it("飞书窄屏下首页统计数字不会被 380px 规则重新放大", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const compactBlock = css.match(/@media \(max-width: 380px\)\s*\{(?<rules>[\s\S]+?)\n\}/)?.groups?.rules ?? "";
+
+    expect(compactBlock).toContain(".console-screen strong,");
+    expect(compactBlock).toContain(".qualify-ring strong {");
+    expect(compactBlock).not.toContain("font-size: 40px;");
+    expect(compactBlock).toContain("font-size: clamp(30px, 8.6vw, 34px);");
+    expect(compactBlock).toContain("white-space: nowrap;");
+  });
+
   it("移动端内置浏览器使用统一内容宽度和本地字体栈", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const rootBlock = css.match(/:root\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";

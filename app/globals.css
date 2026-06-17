@@ -2419,7 +2419,10 @@ html[data-webview="non-wechat"] .lead-trust-row span {
 
   .console-screen strong,
   .qualify-ring strong {
-    font-size: 40px;
+    max-width: 100%;
+    font-size: clamp(30px, 8.6vw, 34px);
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .console-screen span,
