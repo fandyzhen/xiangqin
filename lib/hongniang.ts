@@ -8,8 +8,22 @@ export type HongniangLead = SubmissionPayload & {
   intendedGirl: MatchedGirl | null;
 };
 
-export function verifyHongniangPassword(input: string, password = process.env.HONGNIANG_PASSWORD || HONGNIANG_DEFAULT_PASSWORD) {
-  return input === password;
+export function getHongniangPassword({
+  configuredPassword = process.env.HONGNIANG_PASSWORD,
+  nodeEnv = process.env.NODE_ENV
+}: {
+  configuredPassword?: string;
+  nodeEnv?: string;
+} = {}) {
+  const password = configuredPassword?.trim() ?? "";
+  if (password) {
+    return password;
+  }
+  return nodeEnv === "production" ? "" : HONGNIANG_DEFAULT_PASSWORD;
+}
+
+export function verifyHongniangPassword(input: string, password = getHongniangPassword()) {
+  return Boolean(password) && input === password;
 }
 
 export function getLeadSourceLabel(intent: SubmissionPayload["leadIntent"]) {

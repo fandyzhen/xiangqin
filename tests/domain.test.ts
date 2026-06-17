@@ -10,7 +10,7 @@ import { INITIAL_PARTICIPANT_COUNT, nextParticipantCount } from "@/lib/participa
 import { PERSONALITY_ARCHETYPE_COUNT, buildQuiz, scoreQuiz } from "@/lib/quiz";
 import { QUESTION_BANK } from "@/lib/questions";
 import { validateLeadContact } from "@/lib/submission";
-import { HONGNIANG_DEFAULT_PASSWORD, buildHongniangLeadList, verifyHongniangPassword } from "@/lib/hongniang";
+import { HONGNIANG_DEFAULT_PASSWORD, buildHongniangLeadList, getHongniangPassword, verifyHongniangPassword } from "@/lib/hongniang";
 import {
   PHONE_DUPLICATE_WINDOW_MS,
   SUBMISSION_IP_FREQUENCY_LIMIT,
@@ -589,6 +589,22 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(list[1].read).toBe(false);
     expect(list[1].leadSource).toBe("想看更多本地理想型");
     expect(list[1].intendedGirl).toBeNull();
+  });
+
+  it("生产环境没有配置红娘密码时不能回退到默认密码", () => {
+    const missingProductionPassword = getHongniangPassword({
+      configuredPassword: "",
+      nodeEnv: "production"
+    });
+    const configuredProductionPassword = getHongniangPassword({
+      configuredPassword: "new-secure-password",
+      nodeEnv: "production"
+    });
+
+    expect(missingProductionPassword).toBe("");
+    expect(verifyHongniangPassword(HONGNIANG_DEFAULT_PASSWORD, missingProductionPassword)).toBe(false);
+    expect(verifyHongniangPassword("new-secure-password", configuredProductionPassword)).toBe(true);
+    expect(verifyHongniangPassword(HONGNIANG_DEFAULT_PASSWORD, configuredProductionPassword)).toBe(false);
   });
 
   it("档案库发现人数里的数字需要独立放大高亮", () => {
