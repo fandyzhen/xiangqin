@@ -2374,6 +2374,20 @@ html[data-webview="non-wechat"] .lead-trust-row span {
     min-height: 100dvh;
   }
 
+  .console-screen,
+  .qualify-ring {
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .console-screen strong,
+  .qualify-ring strong {
+    max-width: 100%;
+    font-size: clamp(32px, 9vw, 36px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   html[data-webview="non-wechat"] .phone :is(strong, button, .topbar, .question-kind, .analysis-kicker, .lead-trust-row span, .lead-steps li, .answer-button strong, .choice-copy strong) {
     font-weight: 800;
   }

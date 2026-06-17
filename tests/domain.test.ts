@@ -550,6 +550,20 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(compactBlock).not.toMatch(/\.layout-grid,\s*\.layout-segment\s*\{[^}]*grid-template-columns:\s*1fr;/);
   });
 
+  it("首页统计数字在移动端不会被双列卡片裁切", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const mobileBlock = css.match(/@media \(max-width: 480px\)\s*\{(?<rules>[\s\S]+?)\n\}/)?.groups?.rules ?? "";
+
+    expect(mobileBlock).toContain(".console-screen,");
+    expect(mobileBlock).toContain(".qualify-ring {");
+    expect(mobileBlock).toContain("min-width: 0;");
+    expect(mobileBlock).toContain(".console-screen strong,");
+    expect(mobileBlock).toContain(".qualify-ring strong {");
+    expect(mobileBlock).toContain("font-size: clamp(32px, 9vw, 36px);");
+    expect(mobileBlock).toContain("max-width: 100%;");
+    expect(mobileBlock).toContain("white-space: nowrap;");
+  });
+
   it("移动端内置浏览器使用统一内容宽度和本地字体栈", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
     const rootBlock = css.match(/:root\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
