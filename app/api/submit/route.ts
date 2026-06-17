@@ -1,18 +1,16 @@
 import { mkdir, appendFile, readFile } from "node:fs/promises";
-import path from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 import { APP_NAME } from "@/lib/brand";
 import { detectSubmissionRisk } from "@/lib/experience-limit";
+import { getDataPaths } from "@/lib/storage";
 import { formatSubmissionEmail, validateLeadContact } from "@/lib/submission";
 import type { SubmissionPayload } from "@/lib/types";
 
 export const runtime = "nodejs";
 
 const RECIPIENT = process.env.LEAD_TO_EMAIL || "35457311@qq.com";
-const DATA_DIR = path.join(process.cwd(), "data");
-const SUBMISSIONS_FILE = path.join(DATA_DIR, "submissions.jsonl");
 const IP_HASH_SALT = process.env.IP_HASH_SALT || "zhangqiu-love-rank-ip-marker";
 
 function hasSmtpConfig() {
@@ -26,13 +24,15 @@ function hasSmtpConfig() {
 }
 
 async function writeBackup(payload: SubmissionPayload) {
-  await mkdir(DATA_DIR, { recursive: true });
-  await appendFile(SUBMISSIONS_FILE, `${JSON.stringify(payload)}\n`, "utf8");
+  const paths = getDataPaths();
+  await mkdir(paths.dataDir, { recursive: true });
+  await appendFile(paths.submissionsFile, `${JSON.stringify(payload)}\n`, "utf8");
 }
 
 async function readBackup() {
+  const paths = getDataPaths();
   try {
-    const source = await readFile(SUBMISSIONS_FILE, "utf8");
+    const source = await readFile(paths.submissionsFile, "utf8");
     return source
       .split("\n")
       .map((line) => line.trim())

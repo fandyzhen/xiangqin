@@ -9,6 +9,7 @@ import { formatMatchCopy, generateMatchedGirl, generateMatchedGirls } from "@/li
 import { INITIAL_PARTICIPANT_COUNT, nextParticipantCount } from "@/lib/participants";
 import { PERSONALITY_ARCHETYPE_COUNT, buildQuiz, scoreQuiz } from "@/lib/quiz";
 import { QUESTION_BANK } from "@/lib/questions";
+import { getDataPaths } from "@/lib/storage";
 import { validateLeadContact } from "@/lib/submission";
 import { HONGNIANG_DEFAULT_PASSWORD, buildHongniangLeadList, getHongniangPassword, verifyHongniangPassword } from "@/lib/hongniang";
 import {
@@ -605,6 +606,16 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(verifyHongniangPassword(HONGNIANG_DEFAULT_PASSWORD, missingProductionPassword)).toBe(false);
     expect(verifyHongniangPassword("new-secure-password", configuredProductionPassword)).toBe(true);
     expect(verifyHongniangPassword(HONGNIANG_DEFAULT_PASSWORD, configuredProductionPassword)).toBe(false);
+  });
+
+  it("服务器留资文件目录支持用 DATA_DIR 指向持久卷", () => {
+    const volumePaths = getDataPaths({ dataDir: "/data", cwd: "/app" });
+    const fallbackPaths = getDataPaths({ dataDir: "", cwd: "/app" });
+
+    expect(volumePaths.dataDir).toBe("/data");
+    expect(volumePaths.submissionsFile).toBe("/data/submissions.jsonl");
+    expect(volumePaths.readStatusFile).toBe("/data/read-status.json");
+    expect(fallbackPaths.dataDir).toBe("/app/data");
   });
 
   it("档案库发现人数里的数字需要独立放大高亮", () => {

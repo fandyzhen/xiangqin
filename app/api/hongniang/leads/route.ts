@@ -1,14 +1,10 @@
 import { mkdir, readFile } from "node:fs/promises";
-import path from "node:path";
 import { NextResponse } from "next/server";
 import { buildHongniangLeadList, getHongniangPassword, parseReadIds, verifyHongniangPassword } from "@/lib/hongniang";
+import { getDataPaths } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const SUBMISSIONS_FILE = path.join(DATA_DIR, "submissions.jsonl");
-const READ_STATUS_FILE = path.join(DATA_DIR, "read-status.json");
 
 async function readText(filePath: string) {
   try {
@@ -33,8 +29,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "密码不正确" }, { status: 401 });
   }
 
-  await mkdir(DATA_DIR, { recursive: true });
-  const [submissions, readStatus] = await Promise.all([readText(SUBMISSIONS_FILE), readText(READ_STATUS_FILE)]);
+  const paths = getDataPaths();
+  await mkdir(paths.dataDir, { recursive: true });
+  const [submissions, readStatus] = await Promise.all([readText(paths.submissionsFile), readText(paths.readStatusFile)]);
   const leads = buildHongniangLeadList(submissions, parseReadIds(readStatus));
 
   return NextResponse.json({
