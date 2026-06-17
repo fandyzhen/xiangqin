@@ -20,6 +20,7 @@
   --display: "ZCOOL QingKe HuangYou", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --shadow: 0 28px 76px rgba(0, 0, 0, 0.34);
+  --mobile-app-width: 390px;
 }
 
 * {
@@ -31,6 +32,8 @@ html,
 body {
   min-height: 100%;
   margin: 0;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   background:
     radial-gradient(circle at 18% -8%, rgba(168, 85, 247, 0.28), transparent 34%),
     linear-gradient(135deg, rgba(240, 93, 255, 0.16), transparent 34%),
@@ -1729,8 +1732,9 @@ p {
 }
 
 .lead-trust-row {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: start;
   gap: 7px;
 }
 
@@ -1742,6 +1746,7 @@ p {
   color: #b8f7ff;
   font-size: 11px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .lead-steps {
@@ -2328,7 +2333,8 @@ p {
   }
 
   .phone {
-    width: 100%;
+    width: min(100%, var(--mobile-app-width));
+    margin-inline: auto;
     min-height: 100dvh;
     max-height: none;
     border: 0;

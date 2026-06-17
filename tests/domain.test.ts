@@ -550,6 +550,19 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(compactBlock).not.toMatch(/\.layout-grid,\s*\.layout-segment\s*\{[^}]*grid-template-columns:\s*1fr;/);
   });
 
+  it("移动端内置浏览器使用统一内容宽度和字体缩放", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const rootBlock = css.match(/:root\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const htmlBlock = css.match(/html,\s*body\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const mobileBlock = css.match(/@media \(max-width: 480px\)\s*\{(?<rules>[\s\S]+?)\n\}/)?.groups?.rules ?? "";
+
+    expect(rootBlock).toContain("--mobile-app-width: 390px;");
+    expect(htmlBlock).toContain("-webkit-text-size-adjust: 100%;");
+    expect(htmlBlock).toContain("text-size-adjust: 100%;");
+    expect(mobileBlock).toContain("width: min(100%, var(--mobile-app-width));");
+    expect(mobileBlock).toContain("margin-inline: auto;");
+  });
+
   it("二维码和复制链接优先使用正式绑定域名", () => {
     const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
@@ -571,6 +584,17 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(moreLead.title).toBe("我来帮你继续找");
     expect(moreLead.copy).toContain("再从本地档案里帮你筛");
     expect(moreLead.ctaLabel).toBe("让红娘继续帮我找");
+  });
+
+  it("留资页信任标签在飞书和微信里保持两列节奏", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const trustBlock = css.match(/\.lead-trust-row\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const badgeBlock = css.match(/\.lead-trust-row span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+
+    expect(trustBlock).toContain("display: grid;");
+    expect(trustBlock).toContain("grid-template-columns: repeat(2, max-content);");
+    expect(trustBlock).toContain("justify-content: start;");
+    expect(badgeBlock).toContain("white-space: nowrap;");
   });
 
   it("留资页使用真人微笑红娘头像而不是文字占位", () => {
