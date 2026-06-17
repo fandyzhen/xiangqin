@@ -604,6 +604,21 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(mobileTitleBlock).toContain("font-weight: 700;");
   });
 
+  it("女生资料页在飞书等非微信环境保持匹配标签和说明文案紧凑", () => {
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const fitListBlock = css.match(/html\[data-webview="non-wechat"\] \.match-screen \.fit-list\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const fitBadgeBlock = css.match(/html\[data-webview="non-wechat"\] \.match-screen \.fit-list span\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+    const copyBlock = css.match(/html\[data-webview="non-wechat"\] \.match-copy\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+
+    expect(fitListBlock).toContain("gap: 6px;");
+    expect(fitBadgeBlock).toContain("font-size: 10.5px;");
+    expect(fitBadgeBlock).toContain("white-space: nowrap;");
+    expect(fitBadgeBlock).toContain("font-weight: 800;");
+    expect(copyBlock).toContain("font-size: 12.5px;");
+    expect(copyBlock).toContain("line-height: 1.55;");
+    expect(copyBlock).toContain("max-width: 342px;");
+  });
+
   it("二维码和复制链接优先使用正式绑定域名", () => {
     const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 
