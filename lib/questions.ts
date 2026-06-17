@@ -80,7 +80,7 @@ export const QUESTION_BANK: Record<QuizQuestion["kind"], QuizQuestion[]> = {
       options: [
         { id: "LV1-A", label: "明水古城逛吃逛吃", eligibleLocal: true },
         { id: "LV1-B", label: "绣源河边压马路", eligibleLocal: true },
-        { id: "LV1-C", label: "章丘万达看电影", eligibleLocal: true },
+        { id: "LV1-C", label: "章丘和谐看电影", eligibleLocal: true },
         { id: "LV1-D", label: "不在章丘，我在外地", eligibleLocal: false }
       ]
     },
