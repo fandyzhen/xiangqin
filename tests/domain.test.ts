@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { buildShareAchievement } from "@/lib/achievement";
-import { APP_NAME } from "@/lib/brand";
+import { APP_NAME, APP_SHARE_DESCRIPTION, APP_SHARE_IMAGE, APP_SHARE_TITLE } from "@/lib/brand";
 import { COVER_CTA_LABEL, COVER_GALLERY_IMAGES, COVER_META_BADGES, COVER_QUALIFY_LABEL } from "@/lib/cover";
 import { CUSTOMIZE_FINAL_HINT, CUSTOMIZE_STEP_HINT, IDEAL_LOADING_SUBTITLE, IDEAL_LOADING_TITLE, IDEAL_STEPS } from "@/lib/ideal-steps";
 import { IDEAL_OPTIONS, buildIdealPrompt, createFallbackPortrait } from "@/lib/ideal";
@@ -72,6 +72,19 @@ function createSubmission(overrides: Partial<SubmissionPayload> = {}): Submissio
 describe("章丘男生脱单资格赛领域逻辑", () => {
   it("项目品牌名统一为章丘男生脱单资格赛", () => {
     expect(APP_NAME).toBe("章丘男生脱单资格赛");
+  });
+
+  it("网页提供微信分享可读取的标题、描述和图片元信息", () => {
+    const layoutSource = readFileSync(new URL("../app/layout.tsx", import.meta.url), "utf8");
+
+    expect(APP_SHARE_TITLE).toBe(APP_NAME);
+    expect(APP_SHARE_DESCRIPTION).toContain("闯关");
+    expect(APP_SHARE_IMAGE).toBe("/images/cover-person-a-0.jpg");
+    expect(layoutSource).toContain("openGraph");
+    expect(layoutSource).toContain("twitter");
+    expect(layoutSource).toContain("APP_SHARE_TITLE");
+    expect(layoutSource).toContain("APP_SHARE_DESCRIPTION");
+    expect(layoutSource).toContain("APP_SHARE_IMAGE");
   });
 
   it("按固定骨架抽 8 题", () => {
