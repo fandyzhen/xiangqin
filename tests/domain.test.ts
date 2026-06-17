@@ -527,6 +527,30 @@ describe("章丘男生脱单资格赛领域逻辑", () => {
     expect(SAVE_IMAGE_HINT).toBe("长按保存图片，发朋友圈或发给朋友。");
   });
 
+  it("不合格分享按钮复制战绩文案并弹出微信右上角引导", () => {
+    const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+    const guideBlock = css.match(/\.share-guide-overlay\s*\{(?<rules>[^}]+)\}/)?.groups?.rules ?? "";
+
+    expect(pageSource).toContain("const [shareGuideOpen, setShareGuideOpen]");
+    expect(pageSource).toContain("setShareGuideOpen(true)");
+    expect(pageSource).toContain("文案已复制，点右上角");
+    expect(pageSource).toContain('className="share-guide-overlay"');
+    expect(pageSource).toContain("点右上角");
+    expect(pageSource).not.toContain("navigator.share");
+    expect(guideBlock).toContain("position: fixed;");
+    expect(guideBlock).toContain("z-index: 80;");
+  });
+
+  it("二维码和复制链接优先使用正式绑定域名", () => {
+    const pageSource = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+    expect(pageSource).toContain("NEXT_PUBLIC_SITE_URL");
+    expect(pageSource).toContain("function getShareUrl()");
+    expect(pageSource).toContain("QRCode.toDataURL(getShareUrl()");
+    expect(pageSource).toContain("const url = getShareUrl();");
+  });
+
   it("留资页根据进入动机展示红娘帮忙话术", () => {
     const girlLead = getLeadPageContent("girl");
     const moreLead = getLeadPageContent("more");

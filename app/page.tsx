@@ -59,6 +59,7 @@ const QUALIFY_RATE = 78.23;
 const MATCH_LINES = ["读取本地资料标签中", "相处性格匹配中", "生活方式匹配中", "关系节奏匹配中", "身材状态匹配中"];
 const MATCH_SCAN_STEP_DELAY_MS = 600;
 const VISITOR_ID_STORAGE_KEY = "zq_visitor_id";
+const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
 
 function randomId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -80,6 +81,18 @@ function getOrCreateVisitorId() {
   const nextId = `visitor-${randomId()}`;
   window.localStorage.setItem(VISITOR_ID_STORAGE_KEY, nextId);
   return nextId;
+}
+
+function getShareUrl() {
+  if (PUBLIC_SITE_URL) {
+    return PUBLIC_SITE_URL;
+  }
+
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  return window.location.href.split("#")[0];
 }
 
 function ChoiceCard({
@@ -119,6 +132,7 @@ export default function HomePage() {
   const [qrCode, setQrCode] = useState("");
   const [shareImage, setShareImage] = useState("");
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareGuideOpen, setShareGuideOpen] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [qualifyRate, setQualifyRate] = useState(0);
   const [matchCount, setMatchCount] = useState(0);
@@ -193,7 +207,7 @@ export default function HomePage() {
     async function makeQr() {
       if (typeof window === "undefined") return;
       const QRCode = await import("qrcode");
-      const dataUrl = await QRCode.toDataURL(window.location.href.split("#")[0], {
+      const dataUrl = await QRCode.toDataURL(getShareUrl(), {
         width: 128,
         margin: 1,
         color: {
@@ -240,6 +254,7 @@ export default function HomePage() {
     setImageState(null);
     setShareImage("");
     setShareModalOpen(false);
+    setShareGuideOpen(false);
     setFormMessage("");
     setIdeal(DEFAULT_IDEAL);
     setIdealStepIndex(0);
@@ -310,6 +325,7 @@ export default function HomePage() {
     setStage("generating");
     setShareImage("");
     setShareModalOpen(false);
+    setShareGuideOpen(false);
 
     try {
       const response = await fetch("/api/ideal-image", {
@@ -365,15 +381,16 @@ export default function HomePage() {
 
   async function shareEntry() {
     const text = achievement?.shareText ?? `我刚测了${APP_NAME}，看看你能不能解锁红娘匹配。`;
-    const url = window.location.href.split("#")[0];
+    const url = getShareUrl();
 
-    if (navigator.share) {
-      await navigator.share({ title: APP_NAME, text, url });
-      return;
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setFormMessage("文案已复制，点右上角 ··· 分享给朋友或朋友圈。");
+    } catch {
+      setFormMessage("点右上角 ··· 分享给朋友或朋友圈。");
     }
 
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setFormMessage("链接已复制，发给单身兄弟试试。");
+    setShareGuideOpen(true);
   }
 
   async function submitLead() {
@@ -875,6 +892,16 @@ export default function HomePage() {
               )}
             </div>
           </div>
+        )}
+
+        {shareGuideOpen && (
+          <button className="share-guide-overlay" type="button" aria-label="关闭微信分享引导" onClick={() => setShareGuideOpen(false)}>
+            <span className="share-guide-arrow" aria-hidden="true" />
+            <span className="share-guide-card">
+              <strong>点右上角 ···</strong>
+              <small>文案已复制，分享给朋友或朋友圈。</small>
+            </span>
+          </button>
         )}
       </section>
     </main>

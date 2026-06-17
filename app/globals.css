@@ -1783,6 +1783,76 @@ p {
   backdrop-filter: blur(8px);
 }
 
+.share-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  border: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at 86% 8%, rgba(216, 180, 254, 0.22), transparent 26%),
+    linear-gradient(180deg, rgba(13, 4, 27, 0.48), rgba(8, 3, 17, 0.84));
+  color: var(--cream);
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.share-guide-arrow {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 88px;
+  height: 96px;
+  border-top: 5px solid rgba(251, 240, 255, 0.92);
+  border-right: 5px solid rgba(251, 240, 255, 0.92);
+  border-radius: 0 24px 0 0;
+  filter: drop-shadow(0 8px 18px rgba(240, 93, 255, 0.36));
+  transform: rotate(-10deg);
+}
+
+.share-guide-arrow::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: -11px;
+  width: 24px;
+  height: 24px;
+  border-top: 5px solid rgba(103, 232, 249, 0.96);
+  border-right: 5px solid rgba(103, 232, 249, 0.96);
+  transform: rotate(45deg);
+}
+
+.share-guide-card {
+  position: absolute;
+  top: 96px;
+  right: 16px;
+  width: min(278px, calc(100vw - 34px));
+  display: grid;
+  gap: 7px;
+  padding: 15px 16px;
+  border: 1px solid rgba(216, 180, 254, 0.38);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(54, 22, 94, 0.94), rgba(24, 9, 45, 0.96)),
+    var(--panel);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.42);
+}
+
+.share-guide-card strong {
+  color: var(--white);
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.share-guide-card small {
+  color: var(--cream-2);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
 .lead-modal {
   width: min(100%, 410px);
   position: relative;
